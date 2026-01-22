@@ -230,6 +230,65 @@ docker ps
 
 ## 2) Crear el modelo EHR en PostgreSQL
 
+### 🧠 Antes de empezar: ¿qué estamos modelando?
+
+Antes de escribir SQL, pensemos en la realidad clínica.
+
+En un hospital:
+
+- Un **paciente** es una persona que existe a lo largo del tiempo.
+- Un paciente puede tener **múltiples ingresos al hospital**.
+- Cada ingreso es un **encuentro clínico** con inicio y fin.
+- Durante un encuentro ocurren **eventos clínicos**:
+  diagnósticos, laboratorios, tratamientos.
+
+El diagrama siguiente es un **mapa de esa realidad**:
+
+```mermaid
+erDiagram
+PATIENTS ||--o{ ADMISSIONS : has
+ADMISSIONS ||--o{ DIAGNOSES : includes
+ADMISSIONS ||--o{ LABEVENTS : generates
+D_LABITEMS ||--o{ LABEVENTS : defines
+
+    PATIENTS {
+        int subject_id PK
+        string external_id
+        string full_name
+        string sex
+        date date_of_birth
+    }
+
+    ADMISSIONS {
+        int hadm_id PK
+        int subject_id FK
+        datetime admittime
+        datetime dischtime
+        string admission_type
+        boolean hospital_expire_flag
+    }
+
+    DIAGNOSES {
+        int diagnosis_id PK
+        int hadm_id FK
+        string diagnosis_text
+    }
+
+    D_LABITEMS {
+        int labitem_id PK
+        string label
+        string unit
+    }
+
+    LABEVENTS {
+        int labevent_id PK
+        int hadm_id FK
+        int labitem_id FK
+        datetime charttime
+        numeric value_num
+    }
+```
+
 ### 2.1 Crear el archivo SQL
 
 Crea el archivo:
@@ -430,51 +489,6 @@ INSERT INTO labevents (hadm_id, labitem_id, charttime, value_num) VALUES
 ```
 
 Vuelve a ejecutar el archivo SQL.
-
-```mermaid
-erDiagram
-PATIENTS ||--o{ ADMISSIONS : has
-ADMISSIONS ||--o{ DIAGNOSES : includes
-ADMISSIONS ||--o{ LABEVENTS : generates
-D_LABITEMS ||--o{ LABEVENTS : defines
-
-    PATIENTS {
-        int subject_id PK
-        string external_id
-        string full_name
-        string sex
-        date date_of_birth
-    }
-
-    ADMISSIONS {
-        int hadm_id PK
-        int subject_id FK
-        datetime admittime
-        datetime dischtime
-        string admission_type
-        boolean hospital_expire_flag
-    }
-
-    DIAGNOSES {
-        int diagnosis_id PK
-        int hadm_id FK
-        string diagnosis_text
-    }
-
-    D_LABITEMS {
-        int labitem_id PK
-        string label
-        string unit
-    }
-
-    LABEVENTS {
-        int labevent_id PK
-        int hadm_id FK
-        int labitem_id FK
-        datetime charttime
-        numeric value_num
-    }
-```
 
 ---
 
