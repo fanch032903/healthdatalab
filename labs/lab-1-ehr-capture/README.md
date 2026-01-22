@@ -431,6 +431,49 @@ INSERT INTO labevents (hadm_id, labitem_id, charttime, value_num) VALUES
 
 Vuelve a ejecutar el archivo SQL.
 
+erDiagram
+PATIENTS ||--o{ ADMISSIONS : has
+ADMISSIONS ||--o{ DIAGNOSES : includes
+ADMISSIONS ||--o{ LABEVENTS : generates
+D_LABITEMS ||--o{ LABEVENTS : defines
+
+    PATIENTS {
+        int subject_id PK
+        string external_id
+        string full_name
+        string sex
+        date date_of_birth
+    }
+
+    ADMISSIONS {
+        int hadm_id PK
+        int subject_id FK
+        datetime admittime
+        datetime dischtime
+        string admission_type
+        boolean hospital_expire_flag
+    }
+
+    DIAGNOSES {
+        int diagnosis_id PK
+        int hadm_id FK
+        string diagnosis_text
+    }
+
+    D_LABITEMS {
+        int labitem_id PK
+        string label
+        string unit
+    }
+
+    LABEVENTS {
+        int labevent_id PK
+        int hadm_id FK
+        int labitem_id FK
+        datetime charttime
+        numeric value_num
+    }
+
 ---
 
 ## 🔵 CHECKPOINT 3 — Datos clínicos capturados
