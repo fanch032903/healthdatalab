@@ -25,10 +25,7 @@ En este laboratorio harás una mini-auditoría de calidad (veracidad y missing v
 
 ---
 
-## 👥 Reglas del laboratorio (para evitar caos)
-
-> [!IMPORTANT]
-> Estas reglas son **parte de la evaluación**.
+## 👥 Reglas del laboratorio
 
 ### Regla 1 — Fork por grupo (no individual)
 
